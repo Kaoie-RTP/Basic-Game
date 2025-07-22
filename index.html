@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+        h1 {
+            color: black;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            margin-left: 20px;
+            margin-right: 20px;
+            padding: 20px;
+            border: 1em;
+            border-radius: 10px;
+            background-color: #c7c1c1;
+        }
+        .gold {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            color: white;
+            background-color: gold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .plstats {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            color: white;
+            background-color: rgb(0, 255, 170);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        body {
+            background-color: aliceblue;
+        }
+
+    </style>
+    <title>Game.JS</title>
+</head>
+<!-- ...existing code... -->
+<body>
+    <h1>Welcome To My Game</h1>
+    <p style="text-align: center; font-family: Arial, sans-serif; font-size: 1.2em;">
+        This is a simple JavaScript game. Enjoy playing!
+    </p>
+    <p style="text-align: center; font-family: Arial, sans-serif; font-size: 1.2em;">
+        Check the console for more information.
+    </p>
+    <button class="gold">Find Golds</button>
+    <button class="plstats">Show Player's Stats</button>
+
+    <!-- Account controls -->
+    <div style="text-align:center; margin-top:20px;">
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button id="signupBtn">Sign Up</button>
+        <button id="signinBtn">Sign In</button>
+        <button id="saveStatsBtn">Save Stats</button>
+        <button id="loadStatsBtn">Load Stats</button>
+    </div>
+
+    <script src="players.js"></script>
+    <script src="text1.js"></script>
+    <script>
+        // Store current logged-in username
+        let currentUser = null;
+
+        // Load player stats from localStorage or set defaults
+        window.playerHealth = Number(localStorage.getItem('playerHealth')) || 100;
+        window.playerMana = Number(localStorage.getItem('playerMana')) || 50;
+        window.playerLevel = Number(localStorage.getItem('playerLevel')) || 1;
+        window.playerExperience = Number(localStorage.getItem('playerExperience')) || 0;
+        window.playerGold = Number(localStorage.getItem('playerGold')) || 0;
+        window.playerGems = Number(localStorage.getItem('playerGems')) || 0;
+
+        // Save player stats to localStorage
+        function savePlayerStats() {
+            localStorage.setItem('playerHealth', window.playerHealth);
+            localStorage.setItem('playerMana', window.playerMana);
+            localStorage.setItem('playerLevel', window.playerLevel);
+            localStorage.setItem('playerExperience', window.playerExperience);
+            localStorage.setItem('playerGold', window.playerGold);
+            localStorage.setItem('playerGems', window.playerGems);
+        }
+
+        const findGolds = () => {
+            const rand = Math.random() * 100;
+            let gold = 0;
+            if (rand < 50) {
+                gold = 0;
+            } else if (rand < 80) {
+                gold = 1;
+            } else if (rand < 95) {
+                gold = 2;
+            } else if (rand < 110) {
+                gold = 3;
+            } else if (rand < 115) {
+                gold = 4;
+            } else if (rand < 115.1) {
+                gold = 5;
+            }
+            window.playerGold += gold;
+            savePlayerStats(); // Save after updating gold
+            console.log(`You found ${gold} gold(s)! Total gold: ${window.playerGold}`);
+        }
+
+        document.querySelector('button.gold').addEventListener('click', findGolds);
+
+        const showplayerstats = () => {
+            console.log("[Player's Stats] : Health: " + window.playerHealth + ", Mana: " + window.playerMana + ", Level: " + window.playerLevel + ", Experience: " + window.playerExperience + ", Gold: " + window.playerGold + ", Gems: " + window.playerGems);
+        }
+        document.querySelector('button.plstats').addEventListener('click', showplayerstats);
+
+        // --- Account system integration ---
+        // Sign Up
+        document.getElementById('signupBtn').onclick = async function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const res = await fetch('http://localhost:3000/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert('Sign up successful!');
+            } else {
+                alert(data.error);
+            }
+        };
+
+        // Sign In
+        document.getElementById('signinBtn').onclick = async function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const res = await fetch('http://localhost:3000/signin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            const data = await res.json();
+            if (data.stats) {
+                currentUser = username;
+                window.playerHealth = data.stats.health;
+                window.playerMana = data.stats.mana;
+                window.playerLevel = data.stats.level;
+                window.playerExperience = data.stats.experience;
+                window.playerGold = data.stats.gold;
+                window.playerGems = data.stats.gems;
+                savePlayerStats();
+                alert('Sign in successful!');
+            } else {
+                alert(data.error);
+            }
+        };
+
+        // Save Stats
+        document.getElementById('saveStatsBtn').onclick = async function() {
+            if (!currentUser) return alert('Please sign in first!');
+            const stats = {
+                health: window.playerHealth,
+                mana: window.playerMana,
+                level: window.playerLevel,
+                experience: window.playerExperience,
+                gold: window.playerGold,
+                gems: window.playerGems
+            };
+            const res = await fetch('http://localhost:3000/savestats', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: currentUser, stats })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert('Stats saved!');
+            } else {
+                alert(data.error);
+            }
+        };
+
+        // Load Stats
+        document.getElementById('loadStatsBtn').onclick = async function() {
+            if (!currentUser) return alert('Please sign in first!');
+            const res = await fetch(`http://localhost:3000/loadstats/${currentUser}`);
+            const data = await res.json();
+            if (data.stats) {
+                window.playerHealth = data.stats.health;
+                window.playerMana = data.stats.mana;
+                window.playerLevel = data.stats.level;
+                window.playerExperience = data.stats.experience;
+                window.playerGold = data.stats.gold;
+                window.playerGems = data.stats.gems;
+                savePlayerStats();
+                alert('Stats loaded!');
+            } else {
+                alert(data.error);
+            }
+        }
+    </script>
+
+
+</body>
+</html>

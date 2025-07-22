@@ -1,0 +1,57 @@
+{
+  "": {
+    "password": "",
+    "stats": {
+      "health": 100,
+      "mana": 50,
+      "level": 1,
+      "experience": 0,
+      "gold": 0,
+      "gems": 0
+    }
+  },
+  "Bra bra": {
+    "password": "12345",
+    "stats": {
+      "health": 100,
+      "mana": 50,
+      "level": 1,
+      "experience": 0,
+      "gold": 8,
+      "gems": 0
+    }
+  },
+  "Ka9okaooo": {
+    "password": "Ka90ka0o0",
+    "stats": {
+      "health": 100,
+      "mana": 50,
+      "level": 1,
+      "experience": 0,
+      "gold": 100000000000000000000000000000000000000000000000000000000000000000,
+      "gems": 0
+    }
+  },
+  "example": {
+    "password": "123456",
+    "stats": {
+      "health": 100,
+      "mana": 50,
+      "level": 1,
+      "experience": 0,
+      "gold": 5,
+      "gems": 0
+    }
+  },
+  "example2": {
+    "password": "147852",
+    "stats": {
+      "health": 100,
+      "mana": 50,
+      "level": 1,
+      "experience": 0,
+      "gold": 0,
+      "gems": 0
+    }
+  }
+}
